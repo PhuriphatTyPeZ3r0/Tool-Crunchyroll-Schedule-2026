@@ -7,8 +7,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node --env-file=.env server.js",
-    "spike": "node --env-file=.env scripts/spike.mjs"
+    "start": "node --env-file-if-exists=.env server.js",
+    "spike": "node --env-file-if-exists=.env scripts/spike.mjs"
   },
   "dependencies": {
     "express": "^4.19.2",

@@ -1,71 +1,61 @@
-# Crunchyroll → iCalendar (.ics) API
+# Crunchyroll Schedule → iCalendar (.ics)
 
-Serves Crunchyroll's simulcast release schedule as an `.ics` feed you can subscribe
-to in Google/Apple Calendar.
+Serves the **Summer 2026** anime airing schedule (shows streaming on Crunchyroll)
+as an `.ics` feed you can subscribe to in Google/Apple Calendar.
 
-## ⚠️ Must run on a residential IP
+## Data source: AniList (not Crunchyroll's own API)
 
-Crunchyroll is behind Cloudflare bot management, which **blocks datacenter IPs**
-(confirmed: Render returns a `403 Just a moment…` challenge). Run this on a home
-machine / mini-PC / Raspberry Pi and expose it with a **Cloudflare Tunnel**.
-Cloud hosts (Render/Railway/Fly/AWS/…) will be blocked.
+Crunchyroll's internal API sits behind Cloudflare bot management that enforces
+TLS/JA3 fingerprints — plain HTTP clients are blocked no matter the IP or cookies
+(verified: even a full browser-cookie replay from a residential IP gets a `403
+Just a moment…`). So the schedule comes from **AniList's public GraphQL API**
+(`https://graphql.anilist.co`): no auth, no Cloudflare, no tokens. We keep only
+airings whose series has a Crunchyroll streaming link, and link events to CR.
 
-## Setup
+> Note: AniList tracks the original (sub/simulcast) broadcast time. Separate DUB
+> release dates aren't available, so the feed is sub/simulcast only.
+
+## Run locally
 
 ```bash
 npm install
-cp .env.example .env   # then fill in REFRESH_TOKEN (see below)
-npm start
+npm start          # serves on :3000
+npm run spike      # print the fetched schedule summary
 ```
 
-`.env`:
+Open `http://localhost:3000/api/calendar/crunchyroll.ics`.
 
-| var | what |
-|-----|------|
-| `BASIC_AUTH_TOKEN` | public web-client credentials (base64). Already filled in `.env.example`. |
-| `REFRESH_TOKEN` | **your account's** refresh token — from DevTools → `POST auth/v1/token` response. |
-| `SEASON_START` / `SEASON_END` | ISO dates bounding the season (default: Summer 2026). |
-| `CACHE_TTL_MS` | how long a built feed is served before refresh (default 1h). |
+## Config (`.env`, all optional)
+
+| var | default | meaning |
+|-----|---------|---------|
+| `SEASON_START` / `SEASON_END` | Summer 2026 | ISO date window (UTC) |
+| `CR_ONLY` | `true` | `true` = Crunchyroll shows only; `false` = all airing anime |
+| `CACHE_TTL_MS` | `3600000` | how long a built feed is served before refresh |
+| `PORT` | `3000` | Render sets this automatically |
+
+No secrets required — nothing sensitive to commit.
 
 ## Routes
 
 - `GET /api/health` → `{ "status": "ok" }`
 - `GET /api/calendar/crunchyroll.ics` → the cached feed (`text/calendar`)
-- `GET /probe` → diagnostic: can this host authenticate against Crunchyroll?
+- `GET /probe` → `{ ok, events, bytes }` diagnostic
 
-## Verify it works (do this first, on the home machine)
+## Deploy to Render (free tier)
 
-```bash
-npm run spike
-```
+AniList is reachable from datacenter IPs, so Render works fine.
 
-Tells you: (1) does auth succeed from your IP, (2) does the `refresh_token` rotate,
-(3) is the `browse` endpoint **series-** or **episode-**shaped.
-
-> **Known open risk:** `discover/browse?sort_by=newly_added` returns *recently
-> released* episodes, not *upcoming* ones. If the feed is missing future episodes,
-> swap `SCHEDULE_URL` + the mapping in `services/crunchyrollData.js` for the real
-> weekly simulcast-calendar endpoint (grab its URL from DevTools). That file is the
-> only place that needs to change.
-
-## Expose with Cloudflare Tunnel (stable URL)
-
-Use a **named** tunnel (not a `trycloudflare.com` quick tunnel — those URLs change
-on restart and break the subscription). Requires a domain on a free Cloudflare
-account:
-
-```bash
-cloudflared tunnel login
-cloudflared tunnel create cr-schedule
-cloudflared tunnel route dns cr-schedule cr.yourdomain.com
-cloudflared tunnel run --url http://localhost:3000 cr-schedule
-```
-
-Then in Google Calendar → **Other calendars → From URL** →
-`https://cr.yourdomain.com/api/calendar/crunchyroll.ics`
+1. New → Web Service → connect this repo. Build `npm install`, start `npm start`.
+2. No env vars are required (defaults = Summer 2026, Crunchyroll-only).
+3. To keep the free instance from sleeping (so the in-memory cache stays warm and
+   the first calendar fetch is instant), point a free uptime pinger
+   (cron-job.org / UptimeRobot) at `/api/health` every ~10 min.
+4. Subscribe in Google Calendar → **Other calendars → From URL** →
+   `https://<your-app>.onrender.com/api/calendar/crunchyroll.ics`
 
 ## Architecture
 
-`server.js` → `calendarGenerator` (soft-TTL cache + serve-stale-on-error) →
-`crunchyrollData` (fetch + normalize + season filter) → `crunchyrollAuth`
-(refresh-token grant, in-memory token cache).
+`server.js` → `calendarGenerator` (soft-TTL cache + serve-stale-on-error, stable
+per-episode UIDs, UTC times) → `scheduleData` (AniList GraphQL fetch + Crunchyroll
+filter + season window).

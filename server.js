@@ -1,17 +1,16 @@
 /**
- * Crunchyroll -> iCalendar (.ics) API
+ * Crunchyroll (Summer 2026) anime schedule -> iCalendar (.ics) API
+ *
+ * Data comes from AniList's public GraphQL API (no auth / no Cloudflare), filtered
+ * to shows streaming on Crunchyroll. See services/scheduleData.js.
  *
  * Routes:
- *   GET /api/health                  -> { status: "ok" }
- *   GET /api/calendar/crunchyroll.ics -> the cached .ics feed (text/calendar)
- *   GET /probe                       -> diagnostic: can THIS host reach Crunchyroll?
- *
- * Runs on a residential IP (home machine) exposed via Cloudflare Tunnel, because
- * Crunchyroll's Cloudflare blocks datacenter IPs (confirmed against Render).
+ *   GET /api/health                   -> { status: "ok" }
+ *   GET /api/calendar/crunchyroll.ics -> cached .ics feed (text/calendar)
+ *   GET /probe                        -> diagnostic: rebuild feed, report event count
  */
 import express from "express";
 import { getCalendarIcs } from "./services/calendarGenerator.js";
-import { getAccessToken } from "./services/crunchyrollAuth.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,17 +27,17 @@ app.get("/api/calendar/crunchyroll.ics", async (_req, res) => {
     });
     res.send(ics);
   } catch (err) {
-    // Only reached on a cold cache with a failing upstream.
     console.error("[server] calendar unavailable:", err.message);
     res.status(503).send("Calendar temporarily unavailable. Try again shortly.");
   }
 });
 
-// Diagnostic: quick check that this host can authenticate against Crunchyroll.
+// Diagnostic: rebuild the feed and report how many events it contains.
 app.get("/probe", async (_req, res) => {
   try {
-    const token = await getAccessToken();
-    res.json({ ok: true, tokenPreview: `${token.slice(0, 12)}...` });
+    const ics = await getCalendarIcs();
+    const events = (ics.match(/BEGIN:VEVENT/g) || []).length;
+    res.json({ ok: true, events, bytes: ics.length });
   } catch (err) {
     res.status(502).json({ ok: false, error: err.message });
   }
@@ -47,7 +46,8 @@ app.get("/probe", async (_req, res) => {
 app.listen(PORT, () => {
   console.log(`crunchyroll-schedule listening on :${PORT}`);
   console.log(`  feed:   http://localhost:${PORT}/api/calendar/crunchyroll.ics`);
-  console.log(`  health: http://localhost:${PORT}/api/health`);
   // Warm the cache on boot so the first subscriber gets an instant response.
-  getCalendarIcs().catch((e) => console.warn("[boot] initial fetch failed:", e.message));
+  getCalendarIcs()
+    .then((ics) => console.log(`[boot] cache warmed: ${(ics.match(/BEGIN:VEVENT/g) || []).length} events`))
+    .catch((e) => console.warn("[boot] initial fetch failed:", e.message));
 });

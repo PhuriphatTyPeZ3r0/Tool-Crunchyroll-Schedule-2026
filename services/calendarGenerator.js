@@ -10,7 +10,7 @@
  */
 
 import { createEvents } from "ics";
-import { fetchSchedule } from "./crunchyrollData.js";
+import { fetchSchedule } from "./scheduleData.js";
 
 const TTL_MS = Number(process.env.CACHE_TTL_MS || 60 * 60 * 1000); // 1 hour
 const DURATION_MIN = 24;

@@ -1,0 +1,16 @@
+{
+  "name": "crunchyroll-schedule",
+  "version": "0.1.0",
+  "description": "Crunchyroll simulcast schedule -> iCalendar (.ics) feed",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "spike": "node --env-file=.env scripts/spike.mjs"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

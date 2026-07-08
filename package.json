@@ -7,10 +7,11 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node --env-file=.env server.js",
     "spike": "node --env-file=.env scripts/spike.mjs"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "ics": "^3.12.0"
   }
 }

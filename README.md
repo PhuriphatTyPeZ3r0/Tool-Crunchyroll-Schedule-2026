@@ -1,4 +1,4 @@
-﻿# 📅 Tool-Crunchyroll-Schedule-2026 (Crunchyroll Schedule to iCalendar Feed)
+﻿# <img src="https://api.iconify.design/material-symbols:calendar-month-outline.svg?color=%23F59E0B" width="28" height="28" align="center" /> Tool-Crunchyroll-Schedule-2026 (Crunchyroll Schedule to iCalendar Feed)
 
 <div align="center">
 
@@ -17,7 +17,7 @@
 
 ---
 
-## 📌 สารบัญ (Table of Contents)
+## <img src="https://api.iconify.design/material-symbols:list-alt-outline.svg?color=%236366F1" width="20" height="20" align="center" /> สารบัญ (Table of Contents)
 - [📖 เกี่ยวกับโปรเจกต์ (About The Project)](#-เกี่ยวกับโปรเจกต์-about-the-project)
 - [✨ ฟีเจอร์หลัก (Key Features)](#-ฟีเจอร์หลัก-key-features)
 - [📡 แหล่งข้อมูลและการบายพาส (Data Source & Anti-Bot Strategy)](#-แหล่งข้อมูลและการบายพาส-data-source--anti-bot-strategy)
@@ -109,10 +109,10 @@ graph LR
 
 ---
 
-## 👨‍💻 ผู้พัฒนา (Author)
+## <img src="https://api.iconify.design/material-symbols:person-outline.svg?color=%2306B6D4" width="22" height="22" align="center" /> ผู้พัฒนา (Author)
 
 **Phuriphat Hemakul (PhuriphatTyPeZ3r0)**
-- 🎓 นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CAI)
-- 🏛️ สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
-- 🐙 GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
-- 🌐 Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)
+- <img src="https://api.iconify.design/material-symbols:school-outline.svg?color=%230284C7" width="16" height="16" align="center" /> นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CAI)
+- <img src="https://api.iconify.design/material-symbols:apartment-rounded.svg?color=%230284C7" width="16" height="16" align="center" /> สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
+- <img src="https://api.iconify.design/simple-icons:github.svg?color=%23181717" width="16" height="16" align="center" /> GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
+- <img src="https://api.iconify.design/material-symbols:language.svg?color=%233B82F6" width="16" height="16" align="center" /> Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)

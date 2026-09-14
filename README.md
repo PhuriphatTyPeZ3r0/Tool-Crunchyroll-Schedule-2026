@@ -1,4 +1,4 @@
-# 📅 Tool-Crunchyroll-Schedule-2026 (Crunchyroll Schedule to iCalendar Feed)
+﻿# 📅 Tool-Crunchyroll-Schedule-2026 (Crunchyroll Schedule to iCalendar Feed)
 
 <div align="center">
 
@@ -112,7 +112,7 @@ graph LR
 ## 👨‍💻 ผู้พัฒนา (Author)
 
 **Phuriphat Hemakul (PhuriphatTyPeZ3r0)**
-- 🎓 นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CPE & AI)
+- 🎓 นักศึกษา สาขาวิศวกรรมคอมพิวเตอร์และปัญญาประดิษฐ์ (CAI)
 - 🏛️ สถาบันการจัดการปัญญาภิวัฒน์ (PIM)
 - 🐙 GitHub: [@PhuriphatTyPeZ3r0](https://github.com/PhuriphatTyPeZ3r0)
 - 🌐 Portfolio: [resume-phuriphat-hemakul.vercel.app](https://resume-phuriphat-hemakul.vercel.app)
